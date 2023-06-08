@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"context"
 	"fmt"
+	"os"
 	"strings"
 
 	"github.com/sashabaranov/go-openai"
@@ -21,7 +22,7 @@ func getUserInput(reader *bufio.Reader) string {
 	return userInput
 }
 
-// getResponse send request and get response from the OpenAI 
+// getResponse send request and get response from the OpenAI
 // it uses 'gpt-3.5-turbo'
 func getResponse(messages []openai.ChatCompletionMessage) (openai.ChatCompletionResponse, error) {
 	resp, err := client.CreateChatCompletion(
@@ -32,4 +33,24 @@ func getResponse(messages []openai.ChatCompletionMessage) (openai.ChatCompletion
 		},
 	)
 	return resp, err
+}
+
+func commandExecute(input string) bool {
+	switch input {
+	case "help":
+		fmt.Println("help statement")
+	case "history":
+		fmt.Println("all chatting history:")
+		for _, m := range messages {
+			fmt.Println(m)
+		}
+	case "config":
+		fmt.Println("config statement")
+	case "exit":
+		fmt.Println("exit statement")
+		os.Exit(0)
+	default:
+		return false
+	}
+	return true
 }

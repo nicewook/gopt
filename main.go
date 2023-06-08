@@ -20,6 +20,10 @@ func main() {
 
 		// TODO: command execution
 		// help, msg(show), clear, sysmsg(get, set), config
+		excuted := commandExecute(userInput)
+		if excuted {
+			continue
+		}
 
 		// make messages
 		messages = append(messages, openai.ChatCompletionMessage{
