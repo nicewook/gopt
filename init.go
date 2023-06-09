@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"log"
 	"os"
 
 	"github.com/sashabaranov/go-openai"
@@ -27,8 +28,11 @@ var (
 )
 
 func init() {
-	OPENAI_API_KEY = os.Getenv("OPENAI_API_KEY")
-	client = openai.NewClient(OPENAI_API_KEY)
-	messages = make([]openai.ChatCompletionMessage, 0, 10)
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
 	reader = bufio.NewReader(os.Stdin)
+
+	OPENAI_API_KEY = APIKey()
+	client = openai.NewClient(OPENAI_API_KEY)
+
+	messages = make([]openai.ChatCompletionMessage, 0, 10)
 }
