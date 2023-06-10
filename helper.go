@@ -15,7 +15,7 @@ import (
 const perToken = float32(0.000002)
 
 func colorStr(color, msg string) string {
-	return fmt.Sprint(color + msg + Reset)
+	return color + msg + Reset
 }
 
 func getUserInput(reader *bufio.Reader) string {
@@ -41,14 +41,18 @@ func getResponse(messages []openai.ChatCompletionMessage) (openai.ChatCompletion
 
 func prepareTokenInfo(u openai.Usage) string {
 
-	return fmt.Sprintf("Token: prompt: %d, completion: %d, total: %d, money spent: $%.6f",
-		u.PromptTokens, u.CompletionTokens, u.TotalTokens, float32(u.TotalTokens)*perToken)
+	return fmt.Sprintf("Token. prompt: %s, completion: %s, total: %s, money spent: %s",
+		colorStr(Green, fmt.Sprintf("%d", u.PromptTokens)),
+		colorStr(Green, fmt.Sprintf("%d", u.CompletionTokens)),
+		colorStr(Green, fmt.Sprintf("%d", u.TotalTokens)),
+		colorStr(Green, fmt.Sprintf("$%.6f", float32(u.TotalTokens)*perToken)))
 }
 
 func prepareCumulativeTokenInfo(totalToken int) string {
 
-	return fmt.Sprintf("cumulative total %d, money spent: $%.6f",
-		totalToken, float32(totalToken)*perToken)
+	return fmt.Sprintf("cumulative total: %s, money spent: %s",
+		colorStr(Green, fmt.Sprintf("%d", totalToken)),
+		colorStr(Green, fmt.Sprintf("$%.6f", float32(totalToken)*perToken)))
 }
 
 func commandExecute(input string) bool {

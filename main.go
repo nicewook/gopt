@@ -59,9 +59,10 @@ func main() {
 		if err == nil {
 			log.Println("Current size is", s.Width, "by", s.Height)
 		}
-		fmtString := "%" + strconv.Itoa(s.Width) + "v\n"
-		log.Println("format string:", fmtString)
-		fmt.Printf(fmtString, tokenInfo)
-		fmt.Printf(fmtString, cumulativeTokenInfo)
+		fmtString1 := "%" + strconv.Itoa(s.Width+4*lenColor) + "v\n"
+		fmtString2 := "%" + strconv.Itoa(s.Width+2*lenColor) + "v\n"
+		fmt.Printf(fmtString1, tokenInfo)
+		fmt.Printf(fmtString2, cumulativeTokenInfo)
+
 	}
 }
