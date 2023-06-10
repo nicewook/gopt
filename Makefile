@@ -1,3 +1,3 @@
 run :
 # nodemon --exec go run . --signal SIGTERM
-	@go run .
+	@RUN_MODE=dev go run .

@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"io"
 	"log"
 	"os"
 
@@ -28,7 +29,12 @@ var (
 )
 
 func init() {
+	runMode := os.Getenv("RUN_MODE")
+	if runMode != "dev" {
+		log.SetOutput(io.Discard)
+	}
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
+
 	reader = bufio.NewReader(os.Stdin)
 
 	OPENAI_API_KEY = APIKey()
