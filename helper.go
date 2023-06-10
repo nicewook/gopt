@@ -10,6 +10,10 @@ import (
 	"github.com/sashabaranov/go-openai"
 )
 
+// $0.002 dollar for 1K tokens
+// $0.000002 dollar for 1 tokens
+const perToken = float32(0.000002)
+
 func colorStr(color, msg string) string {
 	return fmt.Sprint(color + msg + Reset)
 }
@@ -35,6 +39,18 @@ func getResponse(messages []openai.ChatCompletionMessage) (openai.ChatCompletion
 	return resp, err
 }
 
+func prepareTokenInfo(u openai.Usage) string {
+
+	return fmt.Sprintf("Token: prompt: %d, completion: %d, total: %d, money spent: $%.6f",
+		u.PromptTokens, u.CompletionTokens, u.TotalTokens, float32(u.TotalTokens)*perToken)
+}
+
+func prepareCumulativeTokenInfo(totalToken int) string {
+
+	return fmt.Sprintf("cumulative total %d, money spent: $%.6f",
+		totalToken, float32(totalToken)*perToken)
+}
+
 func commandExecute(input string) bool {
 	switch input {
 	case "help":
@@ -47,6 +63,8 @@ func commandExecute(input string) bool {
 	case "config":
 		fmt.Println("config statement")
 	case "exit":
+		fallthrough
+	case "q":
 		fmt.Println("exit statement")
 		os.Exit(0)
 	default:
