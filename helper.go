@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/sashabaranov/go-openai"
 )
@@ -43,6 +44,13 @@ func getResponse(messages []openai.ChatCompletionMessage) (openai.ChatCompletion
 
 func calcPrice(iTokens, oTokens int) float32 {
 	return float32(iTokens)*perInputToken + float32(oTokens)*perOutputToken
+}
+
+func prepareElapsedTime(eTime time.Duration) string {
+
+	return fmt.Sprintf("elapsed time: %s",
+		colorStr(Green, fmt.Sprintf("%.2fms", eTime.Seconds())),
+	)
 }
 
 func prepareTokenInfo(u openai.Usage) string {

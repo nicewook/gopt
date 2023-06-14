@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"strconv"
+	"time"
 
 	tsize "github.com/kopoli/go-terminal-size"
 	"github.com/sashabaranov/go-openai"
@@ -35,35 +36,39 @@ func main() {
 			Content: userInput,
 		})
 		// TODO: if too long, remove from the oldest couple, except the system message
-
+		sTime := time.Now()
 		resp, err := getResponse(messages)
 		if err != nil {
 			fmt.Println(colorStr(Red, fmt.Sprintf("ChatCompletion error: %v", err)))
 			fmt.Println()
 			continue
 		}
+		eTime := time.Since(sTime)
 
 		content := resp.Choices[0].Message.Content
-		totalPromptTokens += resp.Usage.PromptTokens
-		totalCompletionTokens += resp.Usage.CompletionTokens
-		tokenInfo := prepareTokenInfo(resp.Usage)
-		cumulativeTokenInfo := prepareCumulativeTokenInfo(totalPromptTokens, totalCompletionTokens)
-
 		messages = append(messages, openai.ChatCompletionMessage{
 			Role:    openai.ChatMessageRoleAssistant,
 			Content: content,
 		})
 		fmt.Println(content)
 
-		// print tokenInfo
+		// print elapsed time, tokenInfo
+		totalPromptTokens += resp.Usage.PromptTokens
+		totalCompletionTokens += resp.Usage.CompletionTokens
+		elapsedTime := prepareElapsedTime(eTime)
+		tokenInfo := prepareTokenInfo(resp.Usage)
+		cumulativeTokenInfo := prepareCumulativeTokenInfo(totalPromptTokens, totalCompletionTokens)
+
 		s, err := tsize.GetSize()
 		if err == nil {
 			log.Println("Current size is", s.Width, "by", s.Height)
 		}
-		fmtString1 := "%" + strconv.Itoa(s.Width+4*lenColor) + "v\n"
-		fmtString2 := "%" + strconv.Itoa(s.Width+2*lenColor) + "v\n"
-		fmt.Printf(fmtString1, tokenInfo)
-		fmt.Printf(fmtString2, cumulativeTokenInfo)
+		fmtStr1Color := "%" + strconv.Itoa(s.Width+1*lenColor) + "v\n"
+		fmtStr4Color := "%" + strconv.Itoa(s.Width+4*lenColor) + "v\n"
+		fmtStr2Color := "%" + strconv.Itoa(s.Width+2*lenColor) + "v\n"
+		fmt.Printf(fmtStr1Color, elapsedTime)
+		fmt.Printf(fmtStr4Color, tokenInfo)
+		fmt.Printf(fmtStr2Color, cumulativeTokenInfo)
 
 	}
 }
