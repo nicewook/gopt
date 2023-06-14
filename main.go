@@ -14,10 +14,10 @@ func main() {
 	// usage
 	// help, model, token and bill info
 	// only one line question - 마지막 글자가 Ctrl+D이면 끝내게 하기?
-	fmt.Println("todo: usage")
 	fmt.Println()
+	fmt.Println(helpMessage())
 
-	var totalToken int
+	var totalPromptTokens, totalCompletionTokens int
 	for {
 		// get user input
 		userInput := getUserInput(reader)
@@ -44,9 +44,10 @@ func main() {
 		}
 
 		content := resp.Choices[0].Message.Content
-		totalToken += resp.Usage.TotalTokens
+		totalPromptTokens += resp.Usage.PromptTokens
+		totalCompletionTokens += resp.Usage.CompletionTokens
 		tokenInfo := prepareTokenInfo(resp.Usage)
-		cumulativeTokenInfo := prepareCumulativeTokenInfo(totalToken)
+		cumulativeTokenInfo := prepareCumulativeTokenInfo(totalPromptTokens, totalCompletionTokens)
 
 		messages = append(messages, openai.ChatCompletionMessage{
 			Role:    openai.ChatMessageRoleAssistant,

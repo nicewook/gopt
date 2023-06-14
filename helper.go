@@ -10,9 +10,11 @@ import (
 	"github.com/sashabaranov/go-openai"
 )
 
-// $0.002 dollar for 1K tokens
-// $0.000002 dollar for 1 tokens
-const perToken = float32(0.000002)
+// Model	     Input	              Output
+// 4K context	 $0.0015 / 1K tokens	$0.002 / 1K tokens
+// 16K context $0.003  / 1K tokens	$0.004 / 1K tokens
+const perInputToken = float32(0.0000015)
+const perOutputToken = float32(0.000002)
 
 func colorStr(color, msg string) string {
 	return color + msg + Reset
@@ -39,38 +41,66 @@ func getResponse(messages []openai.ChatCompletionMessage) (openai.ChatCompletion
 	return resp, err
 }
 
+func calcPrice(iTokens, oTokens int) float32 {
+	return float32(iTokens)*perInputToken + float32(oTokens)*perOutputToken
+}
+
 func prepareTokenInfo(u openai.Usage) string {
 
 	return fmt.Sprintf("Token. prompt: %s, completion: %s, total: %s, money spent: %s",
 		colorStr(Green, fmt.Sprintf("%d", u.PromptTokens)),
 		colorStr(Green, fmt.Sprintf("%d", u.CompletionTokens)),
 		colorStr(Green, fmt.Sprintf("%d", u.TotalTokens)),
-		colorStr(Green, fmt.Sprintf("$%.6f", float32(u.TotalTokens)*perToken)))
+		colorStr(Green, fmt.Sprintf("$%.6f", calcPrice(u.PromptTokens, u.CompletionTokens))),
+	)
 }
 
-func prepareCumulativeTokenInfo(totalToken int) string {
+func prepareCumulativeTokenInfo(totalPromptTokens, totalCompletionTokens int) string {
 
 	return fmt.Sprintf("cumulative total: %s, money spent: %s",
-		colorStr(Green, fmt.Sprintf("%d", totalToken)),
-		colorStr(Green, fmt.Sprintf("$%.6f", float32(totalToken)*perToken)))
+		colorStr(Green, fmt.Sprintf("%d", totalPromptTokens+totalCompletionTokens)),
+		colorStr(Green, fmt.Sprintf("$%.6f", calcPrice(totalPromptTokens, totalCompletionTokens))),
+	)
+}
+
+// command
+func helpMessage() string {
+	help := colorStr(Green, "help")
+	history := colorStr(Green, "history")
+	config := colorStr(Green, "config")
+	exit := colorStr(Green, "exit")
+	q := colorStr(Green, "q")
+
+	return fmt.Sprintf(`Usage:
+  - %s - Displays this help message.
+  - %s - Displays the conversation history which reserved at the moment
+  - %s - Displays configuration information. 
+  - %s or %s - Exits the app.
+	`, help, history, config, exit, q)
 }
 
 func commandExecute(input string) bool {
 	switch input {
+	case "":
+		fallthrough
 	case "help":
-		fmt.Println("help statement")
+		fmt.Println(helpMessage())
+
 	case "history":
 		fmt.Println("all chatting history:")
 		for _, m := range messages {
 			fmt.Println(m)
 		}
+
 	case "config":
 		fmt.Println("config statement")
+
 	case "exit":
 		fallthrough
 	case "q":
 		fmt.Println("exit statement")
 		os.Exit(0)
+
 	default:
 		return false
 	}

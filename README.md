@@ -35,10 +35,10 @@ $ ./gopt
 - Enter `exit` at any time to exit the app.
 
 ## Commands on gpt shell mode
-- `help` - Displays this help message.
+- `help` - Displays command usage.
 - `history` - Displays the conversation history which reserved at the moment
 - `config` - Displays configuration information. 
-- `exit` - Exits the app.
+- `exit` or `q` - Exits the app.
 
 ## Issues and Contributing
 Please open an issue on GitHub to report any problems or make feature requests. Pull requests are welcome!
