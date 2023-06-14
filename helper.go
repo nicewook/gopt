@@ -92,7 +92,13 @@ func commandExecute(input string) bool {
 		fmt.Println("config statement")
 
 	case "context":
+		if len(messages) == 0 {
+			fmt.Println("no contexts yet.")
+			fmt.Println()
+			break
+		}
 		fmt.Println("all chatting context:")
+		fmt.Println()
 		for _, m := range messages {
 			fmt.Println(m)
 		}
