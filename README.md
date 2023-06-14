@@ -36,7 +36,7 @@ $ ./gopt
 
 ## Commands on gpt shell mode
 - `help` - Displays command usage.
-- `history` - Displays the conversation history which reserved at the moment
+- `context` - Displays the conversation context which reserved at the moment
 - `config` - Displays configuration information. 
 - `exit` or `q` - Exits the app.
 

@@ -66,17 +66,19 @@ func prepareCumulativeTokenInfo(totalPromptTokens, totalCompletionTokens int) st
 // command
 func helpMessage() string {
 	help := colorStr(Green, "help")
-	history := colorStr(Green, "history")
 	config := colorStr(Green, "config")
+	context := colorStr(Green, "context")
+	reset := colorStr(Green, "reset")
 	exit := colorStr(Green, "exit")
 	q := colorStr(Green, "q")
 
 	return fmt.Sprintf(`Usage:
   - %s - Displays this help message.
-  - %s - Displays the conversation history which reserved at the moment
   - %s - Displays configuration information. 
+  - %s - Displays the conversation context which reserved at the moment.
+  - %s - Reset all the conversation context.
   - %s or %s - Exits the app.
-	`, help, history, config, exit, q)
+	`, help, config, context, reset, exit, q)
 }
 
 func commandExecute(input string) bool {
@@ -86,14 +88,19 @@ func commandExecute(input string) bool {
 	case "help":
 		fmt.Println(helpMessage())
 
-	case "history":
-		fmt.Println("all chatting history:")
+	case "config":
+		fmt.Println("config statement")
+
+	case "context":
+		fmt.Println("all chatting context:")
 		for _, m := range messages {
 			fmt.Println(m)
 		}
-
-	case "config":
-		fmt.Println("config statement")
+		fmt.Println()
+	case "reset":
+		messages = []openai.ChatCompletionMessage{}
+		fmt.Println("reset all the conversion context.")
+		fmt.Println()
 
 	case "exit":
 		fallthrough
