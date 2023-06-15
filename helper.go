@@ -113,7 +113,7 @@ func commandExecute(input string) bool {
 		}
 		fmt.Println()
 	case "reset":
-		messages = []openai.ChatCompletionMessage{}
+		messages = []openai.ChatCompletionMessage{systemMessage}
 		fmt.Println("reset all the conversion context.")
 		fmt.Println()
 

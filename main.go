@@ -36,6 +36,8 @@ func main() {
 			Content: userInput,
 		})
 		// length check and adjust. except the system message
+		// ids, tokens, err
+		messages = contexLengthAdjust(messages)
 
 		// request completion
 		sTime := time.Now()
