@@ -41,7 +41,7 @@ func main() {
 
 		// request completion
 		sTime := time.Now()
-		resp, err := getResponse(messages)
+		resp, err := chatComplete(messages)
 		if err != nil {
 			fmt.Println(colorStr(Red, fmt.Sprintf("ChatCompletion error: %v", err)))
 			fmt.Println()

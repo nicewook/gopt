@@ -29,14 +29,15 @@ func getUserInput(reader *bufio.Reader) string {
 	return userInput
 }
 
-// getResponse send request and get response from the OpenAI
+// chatComplete send request and get response from the OpenAI
 // it uses 'gpt-3.5-turbo'
-func getResponse(messages []openai.ChatCompletionMessage) (openai.ChatCompletionResponse, error) {
+func chatComplete(messages []openai.ChatCompletionMessage) (openai.ChatCompletionResponse, error) {
 	resp, err := client.CreateChatCompletion(
 		context.Background(),
 		openai.ChatCompletionRequest{
-			Model:    "gpt-3.5-turbo-0613",
-			Messages: messages,
+			Model:     "gpt-3.5-turbo-0613",
+			Messages:  messages,
+			MaxTokens: ModelMaxCompletionToken,
 		},
 	)
 	return resp, err
