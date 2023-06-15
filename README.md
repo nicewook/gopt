@@ -1,4 +1,4 @@
-![gopt](https://github.com/nicewook/gopt/assets/6977358/390241f6-c080-4fa6-a5d6-1d89974001e6)
+<p align="center"><img src = "https://github.com/nicewook/gopt/assets/6977358/6da29951-b25d-492f-967d-4f7be8bddbe9" width="50%" height="50%"></p>
 
 # GOPT(GPT CLI made of Golang)
 GOPT is a command line interface that uses OpenAI's `gpt-3.5-turbo` API to generate responses to user input.
