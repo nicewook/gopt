@@ -97,7 +97,8 @@ func commandExecute(input string) bool {
 		fmt.Println(helpMessage())
 
 	case "config":
-		fmt.Println("config statement")
+		fmt.Println("not yet implemented.")
+		fmt.Println()
 
 	case "context":
 		if len(messages) == 0 {

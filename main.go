@@ -35,7 +35,10 @@ func main() {
 			Role:    openai.ChatMessageRoleUser,
 			Content: userInput,
 		})
-		// TODO: if too long, remove from the oldest couple, except the system message
+		// length check and adjust. except the system message
+
+
+		// request completion 
 		sTime := time.Now()
 		resp, err := getResponse(messages)
 		if err != nil {

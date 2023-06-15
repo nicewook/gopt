@@ -28,7 +28,11 @@ var (
 	OPENAI_API_KEY string
 	client         *openai.Client
 	messages       []openai.ChatCompletionMessage
-	reader         *bufio.Reader
+	systemMessage  = openai.ChatCompletionMessage{
+		Role:    openai.ChatMessageRoleSystem,
+		Content: "You are a helpful assitent and your name is Jin",
+	}
+	reader *bufio.Reader
 )
 
 func init() {
@@ -44,4 +48,5 @@ func init() {
 	client = openai.NewClient(OPENAI_API_KEY)
 
 	messages = make([]openai.ChatCompletionMessage, 0, 10)
+	messages = append(messages, systemMessage)
 }
