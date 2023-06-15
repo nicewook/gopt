@@ -37,8 +37,7 @@ func main() {
 		})
 		// length check and adjust. except the system message
 
-
-		// request completion 
+		// request completion
 		sTime := time.Now()
 		resp, err := getResponse(messages)
 		if err != nil {

@@ -35,7 +35,7 @@ func getResponse(messages []openai.ChatCompletionMessage) (openai.ChatCompletion
 	resp, err := client.CreateChatCompletion(
 		context.Background(),
 		openai.ChatCompletionRequest{
-			Model:    openai.GPT3Dot5Turbo,
+			Model:    "gpt-3.5-turbo-0613",
 			Messages: messages,
 		},
 	)
