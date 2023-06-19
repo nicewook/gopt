@@ -2,10 +2,15 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"log"
+	"os"
+	"path/filepath"
 	"strconv"
+	"strings"
 	"time"
 
+	"github.com/chzyer/readline"
 	tsize "github.com/kopoli/go-terminal-size"
 	"github.com/sashabaranov/go-openai"
 )
@@ -19,14 +24,43 @@ func main() {
 	fmt.Println(helpMessage())
 
 	var totalPromptTokens, totalCompletionTokens int
+
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		log.Fatal(err)
+	}
+	appConfigPath := filepath.Join(homeDir, ".gopt")
+	readlineConfig := &readline.Config{
+		Prompt:          colorStr(Cyan, "gpt> "),
+		HistoryFile:     filepath.Join(appConfigPath, "readline-history"),
+		InterruptPrompt: "^C",
+		EOFPrompt:       "exit",
+	}
+	rl, err := readline.NewEx(readlineConfig)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer rl.Close()
+	rl.CaptureExitSignal()
+
 	for {
 		// get user input
-		userInput := getUserInput(reader)
+
+		userInput, err := rl.Readline()
+		if err == readline.ErrInterrupt {
+			if len(userInput) == 0 {
+				break
+			} else {
+				continue
+			}
+		} else if err == io.EOF {
+			break
+		}
+		userInput = strings.TrimSpace(userInput)
 
 		// TODO: reserved command execution
 		// help, msg(show), clear, sysmsg(get, set), config
-		excuted := commandExecute(userInput)
-		if excuted {
+		if commandExecute(userInput) {
 			continue
 		}
 

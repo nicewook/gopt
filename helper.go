@@ -1,11 +1,9 @@
 package main
 
 import (
-	"bufio"
 	"context"
 	"fmt"
 	"os"
-	"strings"
 	"time"
 
 	"github.com/sashabaranov/go-openai"
@@ -19,14 +17,6 @@ const perOutputToken = float32(0.000002)
 
 func colorStr(color, msg string) string {
 	return color + msg + Reset
-}
-
-func getUserInput(reader *bufio.Reader) string {
-	fmt.Print(colorStr(Cyan, "gpt> "))
-	userInput, _ := reader.ReadString('\n')
-
-	userInput = strings.Replace(userInput, "\n", "", -1)
-	return userInput
 }
 
 // chatComplete send request and get response from the OpenAI
@@ -98,16 +88,18 @@ func commandExecute(input string) bool {
 		fmt.Println(helpMessage())
 
 	case "config":
-		fmt.Println("not yet implemented.")
+		fmt.Println()
+		fmt.Println(colorStr(Green, "not yet implemented."))
 		fmt.Println()
 
 	case "context":
+		fmt.Println()
 		if len(messages) == 0 {
-			fmt.Println("no contexts yet.")
+			fmt.Println(colorStr(Green, "no contexts yet."))
 			fmt.Println()
 			break
 		}
-		fmt.Println("all chatting context:")
+		fmt.Println(colorStr(Green, "all chatting context:"))
 		fmt.Println()
 		for _, m := range messages {
 			fmt.Println(m)
@@ -115,13 +107,15 @@ func commandExecute(input string) bool {
 		fmt.Println()
 	case "reset":
 		messages = []openai.ChatCompletionMessage{systemMessage}
-		fmt.Println("reset all the conversion context.")
+		fmt.Println()
+		fmt.Println(colorStr(Green, "reset all the conversion context."))
 		fmt.Println()
 
 	case "exit":
 		fallthrough
 	case "q":
-		fmt.Println("exit statement")
+		fmt.Println()
+		fmt.Println(colorStr(Green, "Have a great day!"))
 		os.Exit(0)
 
 	default:
