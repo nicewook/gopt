@@ -36,6 +36,7 @@ func main() {
 		readline.PcItem("config"),
 		readline.PcItem("context"),
 		readline.PcItem("reset"),
+		readline.PcItem("clear"),
 		readline.PcItem("exit"),
 	)
 	readlineConfig := &readline.Config{
@@ -73,7 +74,7 @@ func main() {
 
 		// TODO: reserved command execution
 		// help, msg(show), clear, sysmsg(get, set), config
-		if commandExecute(userInput) {
+		if commandExecute(rl.Terminal, userInput) {
 			continue
 		}
 

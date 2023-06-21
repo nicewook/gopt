@@ -3,9 +3,11 @@ package main
 import (
 	"context"
 	"fmt"
+	"io"
 	"os"
 	"time"
 
+	"github.com/chzyer/readline"
 	"github.com/sashabaranov/go-openai"
 )
 
@@ -68,6 +70,7 @@ func helpMessage() string {
 	config := colorStr(Green, "config")
 	context := colorStr(Green, "context")
 	reset := colorStr(Green, "reset")
+	clear := colorStr(Green, "clear")
 	exit := colorStr(Green, "exit")
 	q := colorStr(Green, "q")
 
@@ -76,13 +79,16 @@ func helpMessage() string {
   - %s - Displays configuration information. 
   - %s - Displays the conversation context which reserved at the moment.
   - %s - Reset all the conversation context.
+  - %s - Clear terminal.
   - %s or %s - Exits the app.
-	`, help, config, context, reset, exit, q)
+	`, help, config, context, reset, clear, exit, q)
 }
 
-func commandExecute(input string) bool {
+func commandExecute(w io.Writer, input string) bool {
 	switch input {
 	case "":
+		fallthrough
+	case "h":
 		fallthrough
 	case "help":
 		fmt.Println(helpMessage())
@@ -110,6 +116,9 @@ func commandExecute(input string) bool {
 		fmt.Println()
 		fmt.Println(colorStr(Green, "reset all the conversion context."))
 		fmt.Println()
+
+	case "clear":
+		readline.ClearScreen(w)
 
 	case "exit":
 		fallthrough

@@ -60,6 +60,7 @@ Your OpenAI API key. Required to make requests to the OpenAI API.
 - `config` - Displays configuration information. 
 - `context` - Displays the conversation context which reserved at the moment.
 - `reset` - Reset all the conversation context.
+- `clear` - Clear terminal.
 - `exit` or `q` - Exits the app.
 
 ## Issues 
