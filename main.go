@@ -31,9 +31,18 @@ func main() {
 		log.Fatal(err)
 	}
 	appConfigPath := filepath.Join(homeDir, ".gopt")
+
+	var completer = readline.NewPrefixCompleter(
+		readline.PcItem("help"),
+		readline.PcItem("config"),
+		readline.PcItem("context"),
+		readline.PcItem("reset"),
+		readline.PcItem("exit"),
+	)
 	readlineConfig := &readline.Config{
 		Prompt:          colorStr(Cyan, "gpt> "),
 		HistoryFile:     filepath.Join(appConfigPath, "readline-history"),
+		AutoComplete:    completer,
 		InterruptPrompt: "^C",
 		EOFPrompt:       "exit",
 	}
