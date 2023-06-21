@@ -10,6 +10,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/briandowns/spinner"
 	"github.com/chzyer/readline"
 	tsize "github.com/kopoli/go-terminal-size"
 	"github.com/sashabaranov/go-openai"
@@ -43,9 +44,12 @@ func main() {
 	defer rl.Close()
 	rl.CaptureExitSignal()
 
+	loading := spinner.New([]string{".", "..", "...", "....", "....."}, 150*time.Millisecond)
+	loading.Prefix = colorStr(Yellow, "loading")
+	loading.Color("yellow")
+
 	for {
 		// get user input
-
 		userInput, err := rl.Readline()
 		if err == readline.ErrInterrupt {
 			if len(userInput) == 0 {
@@ -75,12 +79,14 @@ func main() {
 
 		// request completion
 		sTime := time.Now()
+		loading.Start() // Start the spinner
 		resp, err := chatComplete(messages)
 		if err != nil {
 			fmt.Println(colorStr(Red, fmt.Sprintf("ChatCompletion error: %v", err)))
 			fmt.Println()
 			continue
 		}
+		loading.Stop()
 		eTime := time.Since(sTime)
 
 		content := resp.Choices[0].Message.Content
@@ -88,6 +94,7 @@ func main() {
 			Role:    openai.ChatMessageRoleAssistant,
 			Content: content,
 		})
+		fmt.Println()
 		fmt.Println(content)
 
 		// print elapsed time, tokenInfo
