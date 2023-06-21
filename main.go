@@ -12,7 +12,6 @@ import (
 
 	"github.com/briandowns/spinner"
 	"github.com/chzyer/readline"
-	tsize "github.com/kopoli/go-terminal-size"
 	"github.com/sashabaranov/go-openai"
 )
 
@@ -59,6 +58,7 @@ func main() {
 
 	for {
 		// get user input
+
 		userInput, err := rl.Readline()
 		if err == readline.ErrInterrupt {
 			if len(userInput) == 0 {
@@ -113,16 +113,15 @@ func main() {
 		tokenInfo := prepareTokenInfo(resp.Usage)
 		cumulativeTokenInfo := prepareCumulativeTokenInfo(totalPromptTokens, totalCompletionTokens)
 
-		s, err := tsize.GetSize()
-		if err == nil {
-			log.Println("Current size is", s.Width, "by", s.Height)
-		}
-		fmtStr1Color := "%" + strconv.Itoa(s.Width+1*lenColor) + "v\n"
-		fmtStr4Color := "%" + strconv.Itoa(s.Width+4*lenColor) + "v\n"
-		fmtStr2Color := "%" + strconv.Itoa(s.Width+2*lenColor) + "v\n"
-		fmt.Printf(fmtStr1Color, elapsedTime)
-		fmt.Printf(fmtStr4Color, tokenInfo)
-		fmt.Printf(fmtStr2Color, cumulativeTokenInfo)
+		fmt.Printf(rightAlignWithColorWords(1), elapsedTime)
+		fmt.Printf(rightAlignWithColorWords(4), tokenInfo)
+		fmt.Printf(rightAlignWithColorWords(2), cumulativeTokenInfo)
 
 	}
+}
+
+func rightAlignWithColorWords(wordCount int) string {
+	// color prompt should be counted for right alignment
+	virtualWidth := wordCount*lenColor + readline.GetScreenWidth()
+	return "%" + strconv.Itoa(virtualWidth) + "v\n"
 }
