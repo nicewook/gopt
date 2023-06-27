@@ -6,7 +6,7 @@ require (
 	github.com/briandowns/spinner v1.23.0
 	github.com/chzyer/readline v1.5.1
 	github.com/pkoukk/tiktoken-go v0.1.3
-	github.com/sashabaranov/go-openai v1.10.0
+	github.com/sashabaranov/go-openai v1.12.0
 )
 
 require (
