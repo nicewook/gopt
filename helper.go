@@ -36,6 +36,21 @@ func chatComplete(messages []openai.ChatCompletionMessage) (openai.ChatCompletio
 	return resp, err
 }
 
+// chatComplete send request and get response from the OpenAI
+// it uses 'gpt-3.5-turbo'
+func chatCompleteStream(messages []openai.ChatCompletionMessage) (*openai.ChatCompletionStream, error) {
+	stream, err := client.CreateChatCompletionStream(
+		context.Background(),
+		openai.ChatCompletionRequest{
+			Model:     "gpt-3.5-turbo-0613",
+			Messages:  messages,
+			MaxTokens: ModelMaxCompletionToken,
+			Stream:    true,
+		},
+	)
+	return stream, err
+}
+
 func calcPrice(iTokens, oTokens int) float32 {
 	return float32(iTokens)*perInputToken + float32(oTokens)*perOutputToken
 }

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -57,9 +58,9 @@ func main() {
 	loading.Prefix = colorStr(Yellow, "loading")
 	loading.Color("yellow")
 
+	// start loop
 	for {
 		// get user input
-
 		userInput, err := rl.Readline()
 		if err == readline.ErrInterrupt {
 			if len(userInput) == 0 {
@@ -83,34 +84,89 @@ func main() {
 			Role:    openai.ChatMessageRoleUser,
 			Content: userInput,
 		})
-		// length check and adjust. except the system message
-		// ids, tokens, err
-		messages = contexLengthAdjust(messages)
 
 		// request completion
+
+		var (
+			resp            openai.ChatCompletionResponse
+			isStreamMode    bool = true
+			responseContent string
+			curUsage        openai.Usage
+			promptTokenLen  int
+		)
+		// length check and adjust. except the system message
 		sTime := time.Now()
-		loading.Start() // Start the spinner
-		resp, err := chatComplete(messages)
-		if err != nil {
-			fmt.Println(colorStr(Red, fmt.Sprintf("ChatCompletion error: %v", err)))
-			fmt.Println()
-			continue
+		messages, promptTokenLen = contexLengthAdjust(messages)
+
+		log.Println("stream mode:", isStreamMode)
+		fmt.Println()
+		if isStreamMode {
+			stream, err := chatCompleteStream(messages)
+			if err != nil {
+				fmt.Println(colorStr(Red, fmt.Sprintf("ChatCompletion error: %v", err)))
+				fmt.Println()
+				continue
+			}
+			defer stream.Close()
+
+			fmt.Print(colorStr(Blue, "Assistant: "))
+			for {
+				response, err := stream.Recv()
+				if errors.Is(err, io.EOF) {
+					fmt.Println()
+					log.Println("Stream finished")
+					break
+				}
+
+				if err != nil {
+					log.Printf("Stream error: %v\n", err)
+					break
+				}
+
+				responseContent += response.Choices[0].Delta.Content
+				fmt.Print(response.Choices[0].Delta.Content)
+			}
+			completionTokensLen := NumTokensFromText(responseContent, GPT3Dot5Turbo0613)
+			curUsage = openai.Usage{
+				PromptTokens:     promptTokenLen,
+				CompletionTokens: completionTokensLen,
+				TotalTokens:      promptTokenLen + completionTokensLen,
+			}
+		} else {
+			loading.Start() // Start the spinner
+			resp, err = chatComplete(messages)
+			if err != nil {
+				fmt.Println(colorStr(Red, fmt.Sprintf("ChatCompletion error: %v", err)))
+				fmt.Println()
+				continue
+			}
+			loading.Stop()
+			responseContent = resp.Choices[0].Message.Content
+			curUsage = resp.Usage
+			fmt.Println(colorStr(Blue, "Assistant:"), responseContent)
+
 		}
-		loading.Stop()
 		eTime := time.Since(sTime)
 
-		content := resp.Choices[0].Message.Content
-		messages = append(messages, openai.ChatCompletionMessage{
+		respMessage := openai.ChatCompletionMessage{
 			Role:    openai.ChatMessageRoleAssistant,
-			Content: content,
-		})
-		fmt.Printf("\n%s %s\n", colorStr(Blue, "Assistant:"), content)
+			Content: responseContent,
+		}
+		messages = append(messages, respMessage)
 
 		// print elapsed time, tokenInfo
-		totalPromptTokens += resp.Usage.PromptTokens
-		totalCompletionTokens += resp.Usage.CompletionTokens
+		totalPromptTokens += curUsage.PromptTokens
+		totalCompletionTokens += curUsage.CompletionTokens
+
+		if !isStreamMode {
+			log.Println("tiktoken calc and real response Ussage compare in stream mode")
+			log.Printf("prompt: %d, %d", curUsage.PromptTokens, resp.Usage.PromptTokens)
+			log.Printf("completion: %d, %d", curUsage.CompletionTokens, resp.Usage.CompletionTokens)
+			log.Printf("total: %d, %d", curUsage.TotalTokens, resp.Usage.TotalTokens)
+		}
+
 		elapsedTime := prepareElapsedTime(eTime)
-		tokenInfo := prepareTokenInfo(resp.Usage)
+		tokenInfo := prepareTokenInfo(curUsage)
 		cumulativeTokenInfo := prepareCumulativeTokenInfo(totalPromptTokens, totalCompletionTokens)
 
 		fmt.Printf(rightAlignWithColorWords(1), elapsedTime)

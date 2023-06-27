@@ -9,7 +9,7 @@ import (
 	"github.com/sashabaranov/go-openai"
 )
 
-const (
+const ( // color
 	Reset         = "\033[0m"
 	Red           = "\033[31m"
 	Green         = "\033[32m"
@@ -33,6 +33,7 @@ var (
 		Content: "You are a helpful assitent and your name is Jin",
 	}
 	reader *bufio.Reader
+	GPT3Dot5Turbo0613 = "gpt-3.5-turbo-0613"
 )
 
 func init() {

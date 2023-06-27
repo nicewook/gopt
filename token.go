@@ -14,21 +14,21 @@ const (
 	ModelMaxCompletionToken = 1024
 )
 
-func contexLengthAdjust(messages []openai.ChatCompletionMessage) []openai.ChatCompletionMessage {
+func contexLengthAdjust(messages []openai.ChatCompletionMessage) ([]openai.ChatCompletionMessage, int) {
 
-	tokenLen := NumTokensFromMessages(messages, openai.GPT3Dot5Turbo+"-0613")
-	log.Println("tokenLen:", tokenLen)
+	tokenLen := NumTokensFromMessages(messages, GPT3Dot5Turbo0613)
+	log.Println("token length:", tokenLen)
 
 	for tokenLen+ModelMaxCompletionToken > ModelTokenLimit {
-		log.Printf("expected token length %d is exceded the token limit %d",
+		log.Printf("expected token length %d is exceeded the token limit %d",
 			tokenLen+ModelMaxCompletionToken, ModelTokenLimit)
 		log.Println(colorStr(Red, "remove oldest message:"), messages[1])
 
-		messages = append(messages[0:1], messages[2:]...)                         // remove oldest message, except system message
-		tokenLen := NumTokensFromMessages(messages, openai.GPT3Dot5Turbo+"-0613") // count again
-		log.Println("reduced tokenLen:", tokenLen)
+		messages = append(messages[0:1], messages[2:]...)              // remove oldest message, except system message
+		tokenLen := NumTokensFromMessages(messages, GPT3Dot5Turbo0613) // count again
+		log.Println("reduced token length:", tokenLen)
 	}
-	return messages
+	return messages, tokenLen
 }
 
 // below link may not work on Chrome(error: Unable to render code block)
@@ -77,5 +77,16 @@ func NumTokensFromMessages(messages []openai.ChatCompletionMessage, model string
 		}
 	}
 	numTokens += 3 // every reply is primed with <|start|>assistant<|message|>
+	return numTokens
+}
+
+func NumTokensFromText(text string, model string) (numTokens int) {
+	tkm, err := tiktoken.EncodingForModel(model)
+	if err != nil {
+		err = fmt.Errorf("encoding for model: %v", err)
+		log.Println(err)
+		return
+	}
+	numTokens = len(tkm.Encode(text, nil, nil))
 	return numTokens
 }
