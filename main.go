@@ -104,8 +104,7 @@ func main() {
 			Role:    openai.ChatMessageRoleAssistant,
 			Content: content,
 		})
-		fmt.Println()
-		fmt.Println(content)
+		fmt.Printf("\n%s %s\n", colorStr(Blue, "Assistant:"), content)
 
 		// print elapsed time, tokenInfo
 		totalPromptTokens += resp.Usage.PromptTokens

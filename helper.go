@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"log"
 	"os"
 	"time"
 
@@ -87,7 +88,8 @@ func helpMessage() string {
 func commandExecute(w io.Writer, input string) bool {
 	switch input {
 	case "":
-		fallthrough
+		fmt.Println()
+		log.Println("do nothing")
 	case "h":
 		fallthrough
 	case "help":
