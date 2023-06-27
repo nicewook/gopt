@@ -7,7 +7,6 @@ import (
 	"os"
 
 	"github.com/sashabaranov/go-openai"
-	"github.com/tiktoken-go/tokenizer"
 )
 
 const (
@@ -33,8 +32,7 @@ var (
 		Role:    openai.ChatMessageRoleSystem,
 		Content: "You are a helpful assitent and your name is Jin",
 	}
-	reader   *bufio.Reader
-	tictoken tokenizer.Codec
+	reader *bufio.Reader
 )
 
 func init() {
@@ -51,10 +49,4 @@ func init() {
 
 	messages = make([]openai.ChatCompletionMessage, 0, 10)
 	messages = append(messages, systemMessage)
-
-	var err error
-	tictoken, err = tokenizer.Get(tokenizer.Cl100kBase)
-	if err != nil {
-		log.Fatal(err)
-	}
 }
