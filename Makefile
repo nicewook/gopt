@@ -1,3 +1,5 @@
+.PHONY: run, dev
+
 run :
 # nodemon --exec go run . --signal SIGTERM
 	@go run .
