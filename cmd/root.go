@@ -113,7 +113,7 @@ func initConfig() {
 		fmt.Print("Enter your OpenAI API key: ")
 		var apiKey string
 		fmt.Scanln(&apiKey)
-		viper.Set("apiKey", apiKey)
+		viper.Set("openai_api_key", apiKey)
 		err := viper.WriteConfig()
 		cobra.CheckErr(err)
 	}
