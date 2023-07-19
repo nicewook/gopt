@@ -1,4 +1,4 @@
-package main
+package cmd
 
 import (
 	"errors"
@@ -7,6 +7,7 @@ import (
 
 	"github.com/pkoukk/tiktoken-go"
 	"github.com/sashabaranov/go-openai"
+	"github.com/spf13/viper"
 )
 
 const (
@@ -16,7 +17,7 @@ const (
 
 func contexLengthAdjust(messages []openai.ChatCompletionMessage) ([]openai.ChatCompletionMessage, int) {
 
-	tokenLen := NumTokensFromMessages(messages, GPT3Dot5Turbo0613)
+	tokenLen := NumTokensFromMessages(messages, viper.GetString("model"))
 	log.Println("token length:", tokenLen)
 
 	for tokenLen+ModelMaxCompletionToken > ModelTokenLimit {
@@ -24,8 +25,8 @@ func contexLengthAdjust(messages []openai.ChatCompletionMessage) ([]openai.ChatC
 			tokenLen+ModelMaxCompletionToken, ModelTokenLimit)
 		log.Println(colorStr(Red, "remove oldest message:"), messages[1])
 
-		messages = append(messages[0:1], messages[2:]...)              // remove oldest message, except system message
-		tokenLen := NumTokensFromMessages(messages, GPT3Dot5Turbo0613) // count again
+		messages = append(messages[0:1], messages[2:]...)                     // remove oldest message, except system message
+		tokenLen := NumTokensFromMessages(messages, viper.GetString("model")) // count again
 		log.Println("reduced token length:", tokenLen)
 	}
 	return messages, tokenLen
