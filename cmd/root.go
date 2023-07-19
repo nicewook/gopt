@@ -150,7 +150,7 @@ func startChat() {
 		log.Println("stream mode:", isStreamMode)
 		fmt.Println()
 		if isStreamMode {
-			stream, err := chatCompleteStream(messages)
+			stream, err := chatCompleteStream(viper.GetString("model"), messages)
 			if err != nil {
 				color.Red("ChatCompletion error: %v", err)
 				fmt.Println()
@@ -183,7 +183,7 @@ func startChat() {
 			}
 		} else {
 			loading.Start() // Start the spinner
-			resp, err = chatComplete(messages)
+			resp, err = chatComplete(viper.GetString("model"), messages)
 			if err != nil {
 				color.Red("ChatCompletion error: %v", err)
 				fmt.Println()

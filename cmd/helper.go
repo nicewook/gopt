@@ -20,12 +20,11 @@ const perInputToken = float32(0.0000015)
 const perOutputToken = float32(0.000002)
 
 // chatComplete send request and get response from the OpenAI
-// it uses 'gpt-3.5-turbo'
-func chatComplete(messages []openai.ChatCompletionMessage) (openai.ChatCompletionResponse, error) {
+func chatComplete(model string, messages []openai.ChatCompletionMessage) (openai.ChatCompletionResponse, error) {
 	resp, err := client.CreateChatCompletion(
 		context.Background(),
 		openai.ChatCompletionRequest{
-			Model:     "gpt-3.5-turbo-0613",
+			Model:     model,
 			Messages:  messages,
 			MaxTokens: ModelMaxCompletionToken,
 		},
@@ -33,13 +32,12 @@ func chatComplete(messages []openai.ChatCompletionMessage) (openai.ChatCompletio
 	return resp, err
 }
 
-// chatComplete send request and get response from the OpenAI
-// it uses 'gpt-3.5-turbo'
-func chatCompleteStream(messages []openai.ChatCompletionMessage) (*openai.ChatCompletionStream, error) {
+// chatCompleteStream send request and get response as stream from the OpenAI
+func chatCompleteStream(model string, messages []openai.ChatCompletionMessage) (*openai.ChatCompletionStream, error) {
 	stream, err := client.CreateChatCompletionStream(
 		context.Background(),
 		openai.ChatCompletionRequest{
-			Model:     "gpt-3.5-turbo-0613",
+			Model:     model,
 			Messages:  messages,
 			MaxTokens: ModelMaxCompletionToken,
 			Stream:    true,

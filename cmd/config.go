@@ -68,6 +68,29 @@ func setConfig(cmd *cobra.Command, args []string) {
 		return
 	}
 
+	// model values validation
+	if key == "model" {
+
+		var isValid bool
+		for _, model := range gopt.GetModels() {
+			if value == model {
+				isValid = true
+				break
+			}
+		}
+
+		if !isValid {
+			fmt.Println("Value for key 'model' is not valid. Refer to available model list")
+			for _, model := range gopt.GetModels() {
+				fmt.Println("-", model)
+			}
+			return
+		}
+
+		// change model
+		
+	}
+
 	// Let's try to convert the value string to int
 	if intValue, err := strconv.Atoi(value); err == nil {
 		viper.Set(key, intValue)

@@ -5,6 +5,7 @@ go 1.20
 require (
 	github.com/briandowns/spinner v1.23.0
 	github.com/chzyer/readline v1.5.1
+	github.com/fatih/color v1.15.0
 	github.com/pkoukk/tiktoken-go v0.1.3
 	github.com/sashabaranov/go-openai v1.12.0
 	github.com/spf13/cobra v1.7.0
@@ -13,7 +14,6 @@ require (
 
 require (
 	github.com/dlclark/regexp2 v1.8.1 // indirect
-	github.com/fatih/color v1.15.0 // indirect
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
