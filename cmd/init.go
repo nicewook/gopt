@@ -75,14 +75,12 @@ func initConfig() {
 	home, err := os.UserHomeDir()
 	cobra.CheckErr(err)
 	configPath := filepath.Join(home, ".local", "gopt")
-	fmt.Println(configPath)
+
 	if _, err := os.Stat(configPath); os.IsNotExist(err) {
 		// Directory does not exist, create it
 		err := os.Mkdir(configPath, 0755)
 		if err != nil {
-			fmt.Println("Error creating directory:", err)
-		} else {
-			fmt.Println("Directory created successfully")
+			log.Fatal("Error creating directory:", err)
 		}
 	}
 
@@ -94,7 +92,6 @@ func initConfig() {
 	if err := viper.ReadInConfig(); err != nil {
 		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
 			// Config file not found; create a default one.
-			// viper.SetDefault("apikey", "your-api-key")
 			viper.SetDefault("model", gopt.DefaultModel)
 			viper.SetDefault("token", false)
 			viper.SetDefault("system_message", gopt.DefaultSystemMsg)

@@ -5,7 +5,9 @@ package cmd
 
 import (
 	"fmt"
+	"strconv"
 
+	"github.com/nicewook/gopt/internal/gopt"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -38,11 +40,16 @@ var getCmd = &cobra.Command{
 	Use:   "get config",
 	Short: "Get a value from the configuration",
 	Args:  cobra.ExactArgs(1),
-	Run: getConfig,
+	Run:   getConfig,
 }
 
 func getConfig(cmd *cobra.Command, args []string) {
 	key := args[0]
+	if !viper.IsSet(key) {
+		fmt.Printf("Key %s is not valid in the configuration.\n", key)
+		return
+	}
+
 	value := viper.Get(key)
 	fmt.Printf("%s: %v\n", key, value)
 }
@@ -51,13 +58,27 @@ var setCmd = &cobra.Command{
 	Use:   "set",
 	Short: "Set a value in the configuration",
 	Args:  cobra.ExactArgs(2),
-	Run: setConfig,
+	Run:   setConfig,
 }
 
 func setConfig(cmd *cobra.Command, args []string) {
-	key := args[0]
-	value := args[1]
-	viper.Set(key, value)
+	key, value := args[0], args[1]
+	if !viper.IsSet(key) {
+		fmt.Printf("Key %s is not valid in the configuration.\n", key)
+		return
+	}
+
+	// Let's try to convert the value string to int
+	if intValue, err := strconv.Atoi(value); err == nil {
+		viper.Set(key, intValue)
+	} else if boolValue, err := strconv.ParseBool(value); err == nil {
+		// The value is not an int, let's try with bool
+		viper.Set(key, boolValue)
+	} else {
+		// The value is neither int nor bool, so we keep it as string
+		viper.Set(key, value)
+	}
+
 	err := viper.WriteConfig()
 	if err != nil {
 		fmt.Println("Error writing config:", err)
@@ -67,7 +88,7 @@ func setConfig(cmd *cobra.Command, args []string) {
 var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List the configuration",
-	Run: listConfig,
+	Run:   listConfig,
 }
 
 func listConfig(cmd *cobra.Command, args []string) {
@@ -82,16 +103,20 @@ func listConfig(cmd *cobra.Command, args []string) {
 var resetCmd = &cobra.Command{
 	Use:   "reset",
 	Short: "Reset the configuration",
-	Run: resetConfig,
+	Run:   resetConfig,
 }
 
 func resetConfig(cmd *cobra.Command, args []string) {
-	viper.Set("model", "")
-	viper.Set("token", "")
-	viper.Set("max_token", 0)
-	viper.Set("system_message", "")
+	viper.Set("model", gopt.DefaultModel)
+	viper.Set("token", false)
+	viper.Set("system_message", gopt.DefaultSystemMsg)
+	viper.Set("max_token", gopt.DefaultMaxToken)
 	err := viper.WriteConfig()
 	if err != nil {
 		fmt.Println("Error writing config:", err)
 	}
+
+	fmt.Println("config reset to default.")
+	fmt.Println("--")
+	listConfig(cmd, args)
 }
