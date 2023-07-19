@@ -6,14 +6,16 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strconv"
 
+	"github.com/chzyer/readline"
 	"github.com/nicewook/gopt/internal/gopt"
 	"github.com/sashabaranov/go-openai"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
-const ( // color
+const ( // color for width calcluation. many of them not used but reserve
 	Reset         = "\033[0m"
 	Red           = "\033[31m"
 	Green         = "\033[32m"
@@ -27,6 +29,12 @@ const ( // color
 	lenColorReset = len(Reset)
 	lenColor      = lenColorCode + lenColorReset
 )
+
+func rightAlignWithColorWords(wordCount int) string {
+	// color prompt should be counted for right alignment
+	virtualWidth := wordCount*lenColor + readline.GetScreenWidth()
+	return "%" + strconv.Itoa(virtualWidth) + "v\n"
+}
 
 var (
 	client        *openai.Client

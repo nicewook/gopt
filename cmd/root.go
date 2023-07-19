@@ -28,7 +28,6 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	"strconv"
 	"strings"
 	"time"
 
@@ -208,26 +207,18 @@ func startChat() {
 		totalPromptTokens += curUsage.PromptTokens
 		totalCompletionTokens += curUsage.CompletionTokens
 
-		if !isStreamMode {
-			log.Println("tiktoken calc and real response Ussage compare in stream mode")
-			log.Printf("prompt: %d, %d", curUsage.PromptTokens, resp.Usage.PromptTokens)
-			log.Printf("completion: %d, %d", curUsage.CompletionTokens, resp.Usage.CompletionTokens)
-			log.Printf("total: %d, %d", curUsage.TotalTokens, resp.Usage.TotalTokens)
-		}
-
-		elapsedTime := prepareElapsedTime(eTime)
-		tokenInfo := prepareTokenInfo(curUsage)
-		cumulativeTokenInfo := prepareCumulativeTokenInfo(totalPromptTokens, totalCompletionTokens)
-
-		fmt.Printf(rightAlignWithColorWords(1), elapsedTime)
-		fmt.Printf(rightAlignWithColorWords(4), tokenInfo)
-		fmt.Printf(rightAlignWithColorWords(2), cumulativeTokenInfo)
-
+		printMetaInfo(eTime, curUsage, totalPromptTokens, totalCompletionTokens)
 	}
 }
 
-func rightAlignWithColorWords(wordCount int) string {
-	// color prompt should be counted for right alignment
-	virtualWidth := wordCount*lenColor + readline.GetScreenWidth()
-	return "%" + strconv.Itoa(virtualWidth) + "v\n"
+func printMetaInfo(eTime time.Duration, curUsage openai.Usage, totalPromptTokens int, totalCompletionTokens int) {
+	elapsedTime := prepareElapsedTime(eTime)
+	fmt.Printf(rightAlignWithColorWords(1), elapsedTime)
+
+	if viper.GetBool("token") {
+		tokenInfo := prepareTokenInfo(curUsage)
+		cumulativeTokenInfo := prepareCumulativeTokenInfo(totalPromptTokens, totalCompletionTokens)
+		fmt.Printf(rightAlignWithColorWords(4), tokenInfo)
+		fmt.Printf(rightAlignWithColorWords(2), cumulativeTokenInfo)
+	}
 }

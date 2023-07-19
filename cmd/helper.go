@@ -19,10 +19,6 @@ import (
 const perInputToken = float32(0.0000015)
 const perOutputToken = float32(0.000002)
 
-func colorStr(color, msg string) string {
-	return color + msg + Reset
-}
-
 // chatComplete send request and get response from the OpenAI
 // it uses 'gpt-3.5-turbo'
 func chatComplete(messages []openai.ChatCompletionMessage) (openai.ChatCompletionResponse, error) {
