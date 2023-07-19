@@ -5,6 +5,7 @@ package cmd
 
 import (
 	"fmt"
+	"log"
 	"strconv"
 
 	"github.com/nicewook/gopt/internal/gopt"
@@ -17,7 +18,7 @@ var configCmd = &cobra.Command{
 	Use:   "config",
 	Short: "Config your gopt. model, token usage display, etc.",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("config called")
+		log.Println("config called")
 	},
 }
 
@@ -88,7 +89,7 @@ func setConfig(cmd *cobra.Command, args []string) {
 		}
 
 		// change model
-		
+
 	}
 
 	// Let's try to convert the value string to int
