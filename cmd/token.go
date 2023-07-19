@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/fatih/color"
 	"github.com/pkoukk/tiktoken-go"
 	"github.com/sashabaranov/go-openai"
 	"github.com/spf13/viper"
@@ -20,10 +21,12 @@ func contexLengthAdjust(messages []openai.ChatCompletionMessage) ([]openai.ChatC
 	tokenLen := NumTokensFromMessages(messages, viper.GetString("model"))
 	log.Println("token length:", tokenLen)
 
+	red := color.New(color.FgRed).SprintfFunc()
+
 	for tokenLen+ModelMaxCompletionToken > ModelTokenLimit {
 		log.Printf("expected token length %d is exceeded the token limit %d",
 			tokenLen+ModelMaxCompletionToken, ModelTokenLimit)
-		log.Println(colorStr(Red, "remove oldest message:"), messages[1])
+		log.Println(red("remove oldest message:"), messages[1])
 
 		messages = append(messages[0:1], messages[2:]...)                     // remove oldest message, except system message
 		tokenLen := NumTokensFromMessages(messages, viper.GetString("model")) // count again

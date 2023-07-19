@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/chzyer/readline"
+	"github.com/fatih/color"
 	"github.com/sashabaranov/go-openai"
 )
 
@@ -56,39 +57,40 @@ func calcPrice(iTokens, oTokens int) float32 {
 }
 
 func prepareElapsedTime(eTime time.Duration) string {
-
-	return fmt.Sprintf("elapsed time: %s",
-		colorStr(Green, fmt.Sprintf("%.2fms", eTime.Seconds())),
-	)
+	green := color.New(color.FgGreen).SprintfFunc()
+	return fmt.Sprintf("elapsed time: %s", green("%.2fms", eTime.Seconds()))
 }
 
 func prepareTokenInfo(u openai.Usage) string {
-
+	greenF := color.New(color.FgGreen).SprintfFunc()
 	return fmt.Sprintf("Token. prompt: %s, completion: %s, total: %s, money spent: %s",
-		colorStr(Green, fmt.Sprintf("%d", u.PromptTokens)),
-		colorStr(Green, fmt.Sprintf("%d", u.CompletionTokens)),
-		colorStr(Green, fmt.Sprintf("%d", u.TotalTokens)),
-		colorStr(Green, fmt.Sprintf("$%.6f", calcPrice(u.PromptTokens, u.CompletionTokens))),
+		greenF("%d", u.PromptTokens),
+		greenF("%d", u.CompletionTokens),
+		greenF("%d", u.TotalTokens),
+		greenF("$%.6f", calcPrice(u.PromptTokens, u.CompletionTokens)),
 	)
 }
 
 func prepareCumulativeTokenInfo(totalPromptTokens, totalCompletionTokens int) string {
+	greenF := color.New(color.FgGreen).SprintfFunc()
 
 	return fmt.Sprintf("cumulative total: %s, money spent: %s",
-		colorStr(Green, fmt.Sprintf("%d", totalPromptTokens+totalCompletionTokens)),
-		colorStr(Green, fmt.Sprintf("$%.6f", calcPrice(totalPromptTokens, totalCompletionTokens))),
+		greenF("%d", totalPromptTokens+totalCompletionTokens),
+		greenF("$%.6f", calcPrice(totalPromptTokens, totalCompletionTokens)),
 	)
 }
 
 // command
 func helpMessage() string {
-	help := colorStr(Green, "help")
-	config := colorStr(Green, "config")
-	context := colorStr(Green, "context")
-	reset := colorStr(Green, "reset")
-	clear := colorStr(Green, "clear")
-	exit := colorStr(Green, "exit")
-	q := colorStr(Green, "q")
+	green := color.New(color.FgGreen).SprintFunc()
+
+	help := green("help")
+	config := green("config")
+	context := green("context")
+	reset := green("reset")
+	clear := green("clear")
+	exit := green("exit")
+	q := green("q")
 
 	return fmt.Sprintf(`Usage:
   - %s - Displays this help message.
@@ -101,6 +103,7 @@ func helpMessage() string {
 }
 
 func commandExecute(w io.Writer, input string) bool {
+
 	switch input {
 	case "":
 		fmt.Println()
@@ -112,17 +115,18 @@ func commandExecute(w io.Writer, input string) bool {
 
 	case "config":
 		fmt.Println()
-		fmt.Println(colorStr(Green, "not yet implemented."))
+		color.Green("not yet implemented.")
+		// fmt.Println(green("not yet implemented."))
 		fmt.Println()
 
 	case "context":
 		fmt.Println()
 		if len(messages) == 0 {
-			fmt.Println(colorStr(Green, "no contexts yet."))
+			color.Green("no contexts yet.")
 			fmt.Println()
 			break
 		}
-		fmt.Println(colorStr(Green, "all chatting context:"))
+		color.Green("all chatting context:")
 		fmt.Println()
 		for _, m := range messages {
 			fmt.Println(m)
@@ -131,7 +135,7 @@ func commandExecute(w io.Writer, input string) bool {
 	case "reset":
 		messages = []openai.ChatCompletionMessage{systemMessage}
 		fmt.Println()
-		fmt.Println(colorStr(Green, "reset all the conversion context."))
+		color.Green("reset all the conversion context.")
 		fmt.Println()
 
 	case "clear":
@@ -141,7 +145,7 @@ func commandExecute(w io.Writer, input string) bool {
 		fallthrough
 	case "q":
 		fmt.Println()
-		fmt.Println(colorStr(Green, "Have a great day!"))
+		color.Green("Have a great day!")
 		os.Exit(0)
 
 	default:

@@ -34,6 +34,7 @@ import (
 
 	"github.com/briandowns/spinner"
 	"github.com/chzyer/readline"
+	"github.com/fatih/color"
 	"github.com/sashabaranov/go-openai"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -85,8 +86,12 @@ func startChat() {
 		readline.PcItem("clear"),
 		readline.PcItem("exit"),
 	)
+	cyan := color.New(color.FgCyan).SprintFunc()
+	yellow := color.New(color.FgYellow).SprintFunc()
+	blue := color.New(color.FgBlue).SprintFunc()
 	readlineConfig := &readline.Config{
-		Prompt:          colorStr(Cyan, "gpt> "),
+
+		Prompt:          cyan("gpt> "),
 		HistoryFile:     filepath.Join(appConfigPath, "readline-history"),
 		AutoComplete:    completer,
 		InterruptPrompt: "^C",
@@ -100,7 +105,7 @@ func startChat() {
 	rl.CaptureExitSignal()
 
 	loading := spinner.New([]string{".", "..", "...", "....", "....."}, 150*time.Millisecond)
-	loading.Prefix = colorStr(Yellow, "loading")
+	loading.Prefix = yellow("loading")
 	loading.Color("yellow")
 
 	// start loop
@@ -148,13 +153,13 @@ func startChat() {
 		if isStreamMode {
 			stream, err := chatCompleteStream(messages)
 			if err != nil {
-				fmt.Println(colorStr(Red, fmt.Sprintf("ChatCompletion error: %v", err)))
+				color.Red("ChatCompletion error: %v", err)
 				fmt.Println()
 				continue
 			}
 			defer stream.Close()
 
-			fmt.Print(colorStr(Blue, "Assistant: "))
+			color.Blue("Assistant: ")
 			for {
 				response, err := stream.Recv()
 				if errors.Is(err, io.EOF) {
@@ -181,14 +186,14 @@ func startChat() {
 			loading.Start() // Start the spinner
 			resp, err = chatComplete(messages)
 			if err != nil {
-				fmt.Println(colorStr(Red, fmt.Sprintf("ChatCompletion error: %v", err)))
+				color.Red("ChatCompletion error: %v", err)
 				fmt.Println()
 				continue
 			}
 			loading.Stop()
 			responseContent = resp.Choices[0].Message.Content
 			curUsage = resp.Usage
-			fmt.Println(colorStr(Blue, "Assistant:"), responseContent)
+			fmt.Println(blue("Assistant:"), responseContent)
 
 		}
 		eTime := time.Since(sTime)
