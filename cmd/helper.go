@@ -29,6 +29,7 @@ func chatComplete(model string, messages []openai.ChatCompletionMessage) (openai
 			MaxTokens: ModelMaxCompletionToken,
 		},
 	)
+
 	return resp, err
 }
 

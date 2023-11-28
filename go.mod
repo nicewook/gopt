@@ -7,7 +7,7 @@ require (
 	github.com/chzyer/readline v1.5.1
 	github.com/fatih/color v1.15.0
 	github.com/pkoukk/tiktoken-go v0.1.3
-	github.com/sashabaranov/go-openai v1.14.0
+	github.com/sashabaranov/go-openai v1.17.9
 	github.com/spf13/cobra v1.7.0
 	github.com/spf13/viper v1.16.0
 )

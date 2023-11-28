@@ -8,9 +8,10 @@ import (
 	"log"
 	"strconv"
 
-	"github.com/nicewook/gopt/internal/gopt"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+
+	"github.com/nicewook/gopt/config"
 )
 
 // configCmd represents the config command
@@ -73,7 +74,7 @@ func setConfig(cmd *cobra.Command, args []string) {
 	if key == "model" {
 
 		var isValid bool
-		for _, model := range gopt.GetModels() {
+		for _, model := range config.GetModels() {
 			if value == model {
 				isValid = true
 				break
@@ -82,7 +83,7 @@ func setConfig(cmd *cobra.Command, args []string) {
 
 		if !isValid {
 			fmt.Println("Value for key 'model' is not valid. Refer to available model list")
-			for _, model := range gopt.GetModels() {
+			for _, model := range config.GetModels() {
 				fmt.Println("-", model)
 			}
 			return
@@ -131,10 +132,10 @@ var resetCmd = &cobra.Command{
 }
 
 func resetConfig(cmd *cobra.Command, args []string) {
-	viper.Set("model", gopt.DefaultModel)
+	viper.Set("model", config.DefaultModel)
 	viper.Set("token", false)
-	viper.Set("system_message", gopt.DefaultSystemMsg)
-	viper.Set("max_token", gopt.DefaultMaxToken)
+	viper.Set("system_message", config.DefaultSystemMsg)
+	viper.Set("max_token", config.DefaultMaxToken)
 	err := viper.WriteConfig()
 	if err != nil {
 		fmt.Println("Error writing config:", err)

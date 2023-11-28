@@ -9,10 +9,11 @@ import (
 	"strconv"
 
 	"github.com/chzyer/readline"
-	"github.com/nicewook/gopt/internal/gopt"
 	"github.com/sashabaranov/go-openai"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+
+	"github.com/nicewook/gopt/config"
 )
 
 const ( // color for width calcluation. many of them not used but reserve
@@ -41,7 +42,7 @@ var (
 	messages      []openai.ChatCompletionMessage
 	systemMessage = openai.ChatCompletionMessage{
 		Role:    openai.ChatMessageRoleSystem,
-		Content: gopt.DefaultSystemMsg,
+		Content: config.DefaultSystemMsg,
 	}
 )
 
@@ -92,11 +93,11 @@ func initConfig() {
 	if err := viper.ReadInConfig(); err != nil {
 		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
 			// Config file not found; create a default one.
-			viper.SetDefault("model", gopt.DefaultModel)
+			viper.SetDefault("model", config.DefaultModel)
 			viper.SetDefault("token", false)
-			viper.SetDefault("system_message", gopt.DefaultSystemMsg)
-			viper.SetDefault("max_token", gopt.DefaultMaxToken)
-			err := viper.SafeWriteConfigAs(filepath.Join(configPath, gopt.ConfigFile))
+			viper.SetDefault("system_message", config.DefaultSystemMsg)
+			viper.SetDefault("max_token", config.DefaultMaxToken)
+			err := viper.SafeWriteConfigAs(filepath.Join(configPath, "config.yaml"))
 			cobra.CheckErr(err)
 
 		} else {
