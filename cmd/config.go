@@ -74,7 +74,7 @@ func setConfig(cmd *cobra.Command, args []string) {
 	if key == "model" {
 
 		var isValid bool
-		for _, model := range config.GetModels() {
+		for _, model := range config.ListModels() {
 			if value == model {
 				isValid = true
 				break
@@ -83,7 +83,7 @@ func setConfig(cmd *cobra.Command, args []string) {
 
 		if !isValid {
 			fmt.Println("Value for key 'model' is not valid. Refer to available model list")
-			for _, model := range config.GetModels() {
+			for _, model := range config.ListModels() {
 				fmt.Println("-", model)
 			}
 			return
