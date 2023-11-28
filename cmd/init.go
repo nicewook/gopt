@@ -74,7 +74,9 @@ func setLog() {
 func initConfig() {
 
 	home, err := os.UserHomeDir()
-	cobra.CheckErr(err)
+	if err != nil {
+		log.Fatal("Error getting user home directory:", err)
+	}
 	configPath := filepath.Join(home, ".local", "gopt")
 
 	if _, err := os.Stat(configPath); os.IsNotExist(err) {
@@ -97,9 +99,9 @@ func initConfig() {
 			viper.SetDefault("token", false)
 			viper.SetDefault("system_message", config.DefaultSystemMsg)
 			viper.SetDefault("max_token", config.DefaultMaxToken)
-			err := viper.SafeWriteConfigAs(filepath.Join(configPath, "config.yaml"))
-			cobra.CheckErr(err)
-
+			if err := viper.SafeWriteConfig(); err != nil {
+				log.Fatal("Error creating config file:", err)
+			}
 		} else {
 			// Config file was found but another error was produced
 			log.Fatalf("Fatal error config file: %v", err)
@@ -111,8 +113,10 @@ func initConfig() {
 		var apiKey string
 		fmt.Scanln(&apiKey)
 		viper.Set("openai_api_key", apiKey)
-		err := viper.WriteConfig()
-		cobra.CheckErr(err)
+		if err := viper.WriteConfig(); err != nil {
+			log.Fatal("Error writing config file:", err)
+		}
+
 	}
 
 	// init variables
